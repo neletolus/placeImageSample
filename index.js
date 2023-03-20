@@ -5,21 +5,23 @@ const sharp = require("sharp");
 
 const app = express();
 
+// 画像の数を入れる定数
 const imagesLength = 10;
 
-app.use(express.json());
+// 他のサービスで利用する場合にCORSエラーが起きないようにするやつ（ローカルだけならいらない）
 app.use(cors());
 
+// indexページの生成
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-// widthとheightを1~4桁で取る
-app.get("/:width([0-9]{1,4})/:height([0-9]{1,4})", async (req, res) => {
-  const width = Math.min(Number(req.params.width), 1920);
-  const height = Math.min(Number(req.params.height), 1080);
+// widthとheightを1~4桁で取ってランダムな画像をトリミングして表示
+app.get("/:width([0-9]{1,3})/:height([0-9]{1,3})", async (req, res) => {
+  const width = Math.min(Number(req.params.width), 512);
+  const height = Math.min(Number(req.params.height), 512);
 
-  let fileName = Math.floor(Math.random() * imagesLength) + 1 + ".jpg";
+  let fileName = Math.floor(Math.random() * imagesLength) + 1 + ".png";
   let filepath = path.join(__dirname, `images/${fileName}`);
 
   try {
